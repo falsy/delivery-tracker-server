@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/falsy/delivery-tracker-server/controller"
+	"github.com/falsy/delivery-tracker-server/db"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -13,9 +15,10 @@ import (
 )
 
 func main() {
-	_ = godotenv.Load(".env")
-	port := os.Getenv("PORT")
+	godotenv.Load(".env")
+	db.Init()
 
+	port := os.Getenv("PORT")
 	extensionID := os.Getenv("EXTENSION_ID")
 	devClientURL := os.Getenv("DEV_CLIENT_URL")
 
@@ -36,6 +39,9 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello World!"})
 	})
+
+	r.GET("/carriers", controller.GetAllCarriers)
+	r.GET("/carrier/:id", controller.GetCarrierByID)
 
 	log.Printf("Server running on port %s\n", port)
 	r.Run(":" + port)
