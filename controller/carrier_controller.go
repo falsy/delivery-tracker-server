@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/falsy/delivery-tracker-server/repository"
 	"github.com/gin-gonic/gin"
@@ -18,12 +17,7 @@ func GetAllCarriers(c *gin.Context) {
 }
 
 func GetCarrierByID(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "잘못된 ID"})
-		return
-	}
+	id := c.Param("id")
 
 	carrier, err := repository.GetCarrierByID(id)
 	if err != nil {

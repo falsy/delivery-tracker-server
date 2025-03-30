@@ -42,6 +42,7 @@ func main() {
 
 	r.GET("/carriers", controller.GetAllCarriers)
 	r.GET("/carrier/:id", controller.GetCarrierByID)
+	r.GET("/delivery/:carrierId/:trackingNumber", controller.GetDelivery)
 
 	log.Printf("Server running on port %s\n", port)
 	r.Run(":" + port)

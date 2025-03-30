@@ -30,11 +30,11 @@ func GetAllCarriers() ([]model.Carrier, error) {
 	return carriers, nil
 }
 
-func GetCarrierByID(id int) (*model.Carrier, error) {
+func GetCarrierByID(id string) (*model.Carrier, error) {
 	var c model.Carrier
 	err := db.DB.QueryRow(`
     SELECT id, uid, no, name, displayName, isCrawlable, isPopupEnabled, popupURL
-    FROM CarrierModels WHERE id = ?
+    FROM CarrierModels WHERE uid = ?
   `, id).Scan(&c.ID, &c.UID, &c.No, &c.Name, &c.DisplayName, &c.IsCrawlable, &c.IsPopupEnabled, &c.PopupURL)
 
 	if err == sql.ErrNoRows {
