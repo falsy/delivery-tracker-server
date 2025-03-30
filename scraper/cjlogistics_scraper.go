@@ -103,8 +103,6 @@ func CJLogisticsGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 		return nil, err
 	}
 
-	fmt.Println(jsonData)
-
 	if len(jsonData.ParcelResultMap.ResultList) == 0 {
 		return nil, errors.New("해당 운송장이 존재하지 않거나 조회할 수 없습니다")
 	}
@@ -146,15 +144,4 @@ func CJLogisticsGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 		Progresses: progresses,
 		State:      state,
 	}, nil
-}
-
-func parseLocationName(value string) string {
-	if len(value) < 4 {
-		return value + "*"
-	}
-	short := value[:4]
-	if strings.Contains(short, "*") {
-		return short
-	}
-	return short + "*"
 }
