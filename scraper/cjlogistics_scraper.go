@@ -82,8 +82,6 @@ func CJLogisticsGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 	}
 	defer postRes.Body.Close()
 
-	fmt.Println("POST 요청 상태 코드:", postRes.StatusCode)
-
 	if postRes.StatusCode != 200 {
 		return nil, errors.New("운송장 조회에 실패하였습니다")
 	}
