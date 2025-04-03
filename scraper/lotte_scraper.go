@@ -11,10 +11,8 @@ import (
 )
 
 func parseLotteDateTime(value string) string {
-	fmt.Println("value:", value)
 	cleaned := strings.TrimSpace(value)
 	parts := strings.Fields(cleaned)
-	fmt.Println("parts:", parts)
 	if len(parts) < 2 {
 		return strings.TrimSpace(value)
 	}

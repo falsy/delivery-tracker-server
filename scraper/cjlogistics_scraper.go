@@ -72,10 +72,6 @@ func CJLogisticsGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 	}
 	req.Header.Set("Cookie", cookies)
 
-	fmt.Println("요청 쿠키:", cookies)
-	fmt.Println("요청 URL:", postUrl)
-	fmt.Println("요청 CSRF:", csrf)
-
 	postRes, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
