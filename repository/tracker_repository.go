@@ -21,6 +21,12 @@ func (r *TrackerRepository) GetDelivery(carrier *model.Carrier, trackingNumber s
 		return scraper.DaesinGetTrack(trackingNumber)
 	case "hanjin":
 		return scraper.HanjinGetTrack(trackingNumber)
+	case "lotte":
+		return scraper.LotteGetTrack(trackingNumber)
+	case "kdexp":
+		return scraper.KDExpGetTrack(trackingNumber)
+	case "logen":
+		return scraper.LogenGetTrack(trackingNumber)
 	default:
 		return nil, &UnknownCarrierError{Carrier: carrier.Name}
 	}
