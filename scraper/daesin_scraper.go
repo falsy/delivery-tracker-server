@@ -67,7 +67,7 @@ func DaesinGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 			return
 		}
 		td := s.Find("td")
-		description := strings.TrimSpace(td.Eq(2).Text())
+		description := cleanEscapedText(strings.TrimSpace(td.Eq(2).Text()))
 		location := strings.TrimSpace(td.Eq(1).Text())
 		time := parseDaesinDateTime(td.Eq(3).Text())
 		state := parseDaesinStatus(td.Eq(5).Text())

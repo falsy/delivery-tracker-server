@@ -62,7 +62,7 @@ func HanjinGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 	var progresses []model.DeliveryProgress
 	progressTable.Find("tbody").Find("tr").Each(func(i int, s *goquery.Selection) {
 		td := s.Find("td")
-		description := strings.TrimSpace(td.Eq(3).Text())
+		description := cleanEscapedText(strings.TrimSpace(td.Eq(3).Text()))
 		location := strings.TrimSpace(td.Eq(2).Text())
 		time := parseHanjinDateTime(td.Eq(0).Text(), td.Eq(1).Text())
 		state := parseHanjinStatus(description)
