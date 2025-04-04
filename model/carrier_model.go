@@ -1,8 +1,7 @@
 package model
 
 type Carrier struct {
-	ID             int    `json:"id"`
-	UID            string `json:"uid"`
+	UID            string `json:"id"`
 	No             int    `json:"no"`
 	Name           string `json:"name"`
 	DisplayName    string `json:"displayName"`

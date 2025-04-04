@@ -18,6 +18,10 @@ func GetDelivery(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "DB 에러"})
 		return
 	}
+	if carrier == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "존재하지 않는 택배사입니다"})
+		return
+	}
 
 	result, err := repo.GetDelivery(carrier, trackingNumber)
 	if err != nil {

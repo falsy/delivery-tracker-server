@@ -9,7 +9,7 @@ import (
 
 func GetAllCarriers() ([]model.Carrier, error) {
 	rows, err := db.DB.Query(`
-    SELECT id, uid, no, name, displayName, isCrawlable, isPopupEnabled, popupURL
+    SELECT uid, no, name, displayName, isCrawlable, isPopupEnabled, popupURL
     FROM CarrierModels
   `)
 	if err != nil {
@@ -20,7 +20,7 @@ func GetAllCarriers() ([]model.Carrier, error) {
 	var carriers []model.Carrier
 	for rows.Next() {
 		var c model.Carrier
-		err := rows.Scan(&c.ID, &c.UID, &c.No, &c.Name, &c.DisplayName, &c.IsCrawlable, &c.IsPopupEnabled, &c.PopupURL)
+		err := rows.Scan(&c.UID, &c.No, &c.Name, &c.DisplayName, &c.IsCrawlable, &c.IsPopupEnabled, &c.PopupURL)
 		if err != nil {
 			return nil, err
 		}
@@ -33,9 +33,9 @@ func GetAllCarriers() ([]model.Carrier, error) {
 func GetCarrierByID(id string) (*model.Carrier, error) {
 	var c model.Carrier
 	err := db.DB.QueryRow(`
-    SELECT id, uid, no, name, displayName, isCrawlable, isPopupEnabled, popupURL
+    SELECT uid, no, name, displayName, isCrawlable, isPopupEnabled, popupURL
     FROM CarrierModels WHERE uid = ?
-  `, id).Scan(&c.ID, &c.UID, &c.No, &c.Name, &c.DisplayName, &c.IsCrawlable, &c.IsPopupEnabled, &c.PopupURL)
+  `, id).Scan(&c.UID, &c.No, &c.Name, &c.DisplayName, &c.IsCrawlable, &c.IsPopupEnabled, &c.PopupURL)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
