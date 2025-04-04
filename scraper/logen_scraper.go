@@ -59,18 +59,16 @@ func LogenGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 		time := parseLogenDateTime(td.Eq(0).Text())
 		state := parseLogenStatus(td.Eq(2).Text())
 
-		progresses = append(progresses, model.DeliveryProgress{
+		progress := model.DeliveryProgress{
 			Description: description,
 			Location:    location,
 			Time:        time,
 			State:       state,
-		})
-	})
+		}
 
-	// reverse progresses
-	for i, j := 0, len(progresses)-1; i < j; i, j = i+1, j-1 {
-		progresses[i], progresses[j] = progresses[j], progresses[i]
-	}
+		// 역순으로 추가 (최신 -> 오래된 순으로)
+		progresses = append([]model.DeliveryProgress{progress}, progresses...)
+	})
 
 	state := parseLogenStatus("")
 	if len(progresses) > 0 && progresses[0].State.Name == "배달완료" {

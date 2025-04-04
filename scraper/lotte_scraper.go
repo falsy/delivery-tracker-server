@@ -84,11 +84,6 @@ func LotteGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 		})
 	})
 
-	// reverse progresses
-	for i, j := 0, len(progresses)-1; i < j; i, j = i+1, j-1 {
-		progresses[i], progresses[j] = progresses[j], progresses[i]
-	}
-
 	state := parseLotteStatus("상품이동중")
 	if len(progresses) > 0 {
 		state = progresses[0].State

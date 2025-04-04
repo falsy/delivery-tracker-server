@@ -78,6 +78,8 @@ func DaesinGetTrack(trackingNumber string) (*model.DeliveryResult, error) {
 			Time:        time,
 			State:       state,
 		}
+
+		// 역순으로 추가 (최신 -> 오래된 순으로)
 		progresses = append([]model.DeliveryProgress{progress}, progresses...)
 	})
 
