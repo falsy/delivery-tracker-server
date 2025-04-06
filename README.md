@@ -65,7 +65,7 @@ VALUES
 
 ## API
 
-### /carriers
+### GET /carriers
 
 서비스를 제공하는 전체 택배사 정보를 응답합니다.
 
@@ -97,7 +97,7 @@ interface ICarrier {
 ]
 ```
 
-### /carrier/:carrierId
+### GET /carrier/:carrierId
 
 요청한 택배사 정보를 응답합니다.
 
@@ -114,7 +114,7 @@ interface ICarrier {
 }
 ```
 
-### /delivery/:carrierId/:trackingNumber
+### GET /delivery/:carrierId/:trackingNumber
 
 요청한 택배사와 운송장 번호에 대한 배송 상태 정보를 응답합니다.
 
