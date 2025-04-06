@@ -1,6 +1,6 @@
 # Delivery Tracker API Server
 
-웨일 확장 프로그램 "[택배 배송 조회](https://github.com/falsy/delivery-tracker-for-whale)" 서비스를 위해 사용중인 스크래핑 API 서버입니다.
+웨일 확장 프로그램 '[택배 배송 조회](https://github.com/falsy/delivery-tracker-for-whale)'의 API 서버입니다.
 
 ## Environment
 
