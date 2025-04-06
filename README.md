@@ -1,9 +1,10 @@
-# delivery-tracker-server
+# Delivery Tracker API Server
 
-운송장 번호를 통해 택배사를 스크래핑하여 배송 상태를 제공하는 API 서버입니다.  
-현재, 웨일 확장 프로그램 "[택배 배송 조회](https://github.com/falsy/delivery-tracker-for-whale)"의 API 서버로 사용되고 있기 때문에 별도로 사용하기 위해서는 몇 가지 수정이 필요합니다.
+웨일 확장 프로그램 "[택배 배송 조회](https://github.com/falsy/delivery-tracker-for-whale)" 서비스를 위해 사용중인 스크래핑 API 서버입니다.
 
 ## Environment
+
+데이터베이스 정보와 CORS 설정에 필요한 정보를 환경 변수로 사용하고 있습니다.
 
 ```ts
 // .env
@@ -17,14 +18,11 @@ EXTENSION_ID=
 DEV_CLIENT_URL=
 ```
 
-현재 위와 같은 환경 변수를 사용하고 있습니다.  
-만약 별도로 사용한다면, CORS 설정을 위한 EXTENSION_ID, DEV_CLIENT_URL를 제거하고 'main.go' 파일에서 CORS 관련 코드를 수정해야 합니다.
+## Database
 
-## DB
+데이터베이스로 MySQL을 사용하고 있으며 서비스 운영에 필요한 택배사 정보를 담아 사용하고 있습니다.
 
-프로젝트에서는 DB로 MySQL을 사용하고 있으며 CarrierModels 라는 테이블에 택배사 정보를 저장하여 사용하고 있습니다.
-
-### 테이블 생성
+### Table
 
 ```ts
 CREATE TABLE `CarrierModels` (
@@ -46,7 +44,7 @@ CREATE TABLE `CarrierModels` (
 > • isPopupEnabled: 프론트엔드에서 사용자가 새 창으로 운송장 정보를 열 수 있는지 여부  
 > • popupURL: 운송장 번호를 붙여 사용할 수 있는 외부 링크
 
-### 데이터 추가
+### Raw data
 
 ```ts
 // 2025-04-05
@@ -69,12 +67,12 @@ VALUES
 
 ### /carriers
 
-서비스에서 제공하는 전체 택배사 정보를 가져옵니다.
+서비스를 제공하는 전체 택배사 정보를 응답합니다.
 
 ```ts
 interface ICarrier {
   id: string
-  no: number
+  no: number // legacy
   name: string
   displayName: string
   isCrawlable: boolean
@@ -87,13 +85,13 @@ interface ICarrier {
 // e.g.
 [
   {
-    "id":"2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
-    "no":1,
-    "name":"epost",
-    "displayName":"우체국 택배",
-    "isCrawlable":true,
-    "isPopupEnabled":true,
-    "popupURL":"https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
+    "id": "2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
+    "no": 1,
+    "name": "epost",
+    "displayName": "우체국 택배",
+    "isCrawlable": true,
+    "isPopupEnabled": true,
+    "popupURL": "https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
   },
   ...
 ]
@@ -101,24 +99,24 @@ interface ICarrier {
 
 ### /carrier/:carrierId
 
-택배사 id 값을 통해서 해당 택배사 정보를 가져옵니다.
+요청한 택배사 정보를 응답합니다.
 
 ```ts
 // e.g.
 {
-  "id":"2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
-  "no":1,
-  "name":"epost",
-  "displayName":"우체국 택배",
-  "isCrawlable":true,
-  "isPopupEnabled":true,
-  "popupURL":"https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
+  "id": "2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
+  "no": 1,
+  "name": "epost",
+  "displayName": "우체국 택배",
+  "isCrawlable": true,
+  "isPopupEnabled": true,
+  "popupURL": "https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
 }
 ```
 
 ### /delivery/:carrierId/:trackingNumber
 
-택배사 id 값과 운송장 번호를 통해 현재 배송 정보를 가져옵니다.
+요청한 택배사와 운송장 번호에 대한 배송 상태 정보를 응답합니다.
 
 ```ts
 interface IDelivery {
