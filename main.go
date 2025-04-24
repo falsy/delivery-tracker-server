@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,17 +18,18 @@ func main() {
 	db.Init()
 
 	port := os.Getenv("PORT")
-	extensionID := os.Getenv("EXTENSION_ID")
-	devClientURL := os.Getenv("DEV_CLIENT_URL")
+	//extensionID := os.Getenv("EXTENSION_ID")
+	//devClientURL := os.Getenv("DEV_CLIENT_URL")
 
 	r := gin.Default()
 
 	r.Use(gzip.Gzip(gzip.BestSpeed))
 
 	r.Use(cors.New(cors.Config{
-		AllowOriginFunc: func(origin string) bool {
-			return origin == fmt.Sprintf("chrome-extension://%s", extensionID) || origin == devClientURL
-		},
+		//AllowOriginFunc: func(origin string) bool {
+		//	return origin == fmt.Sprintf("chrome-extension://%s", extensionID) || origin == devClientURL
+		//},
+		AllowAllOrigins:  true,
 		AllowCredentials: true,
 		ExposeHeaders:    []string{"ETag"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
