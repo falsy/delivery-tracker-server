@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/falsy/delivery-tracker-server/model"
+	"github.com/falsy/delivery-tracker-server/internal/domain/model"
 	"golang.org/x/net/html/charset"
 )
 

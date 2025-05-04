@@ -1,4 +1,4 @@
-package db
+package mysql
 
 import (
 	"database/sql"
@@ -19,8 +19,6 @@ func Init() {
 		os.Getenv("DB_NAME"),
 	)
 
-	log.Println("DB 연결 시도")
-
 	var err error
 	DB, err = sql.Open("mysql", dsn)
 	if err != nil {
@@ -30,6 +28,10 @@ func Init() {
 	if err = DB.Ping(); err != nil {
 		log.Fatal("DB 핑 실패:", err)
 	}
+}
 
-	log.Println("DB 연결")
+func Close() {
+	if DB != nil {
+		DB.Close()
+	}
 }
