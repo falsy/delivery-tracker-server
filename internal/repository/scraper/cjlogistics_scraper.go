@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/falsy/delivery-tracker-server/model"
+	"github.com/falsy/delivery-tracker-server/internal/domain/model"
 )
 
 func parseCSRFToken(html string) (string, error) {
