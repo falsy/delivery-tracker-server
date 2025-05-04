@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fmt"
+	"strings"
 	"time"
 
 	"github.com/falsy/delivery-tracker-server/internal/config"
@@ -17,10 +17,16 @@ func SetupGlobalMiddleware(r *gin.Engine, cfg *config.Config) {
 	r.Use(gin.Recovery())
 
 	if cfg.Environment == "RELEASE" {
+		allowedOrigins := strings.Split(cfg.AllowedOrigins, ",")
+
 		r.Use(cors.New(cors.Config{
 			AllowOriginFunc: func(origin string) bool {
-				return origin == fmt.Sprintf("chrome-extension://%s", cfg.ExtensionID) ||
-					origin == cfg.DevClientURL
+				for _, o := range allowedOrigins {
+					if origin == o {
+						return true
+					}
+				}
+				return false
 			},
 			AllowCredentials: true,
 			ExposeHeaders:    []string{"ETag"},

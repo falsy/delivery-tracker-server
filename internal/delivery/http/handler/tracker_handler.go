@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/falsy/delivery-tracker-server/pkg/response"
 	"net/http"
 
 	"github.com/falsy/delivery-tracker-server/internal/service"
@@ -25,12 +26,12 @@ func (h *TrackerHandler) GetDelivery(c *gin.Context) {
 	if err != nil {
 		switch err {
 		case service.ErrCarrierNotFound:
-			c.JSON(http.StatusNotFound, gin.H{"error": "Carrier not found"})
+			response.Error(c, http.StatusInternalServerError, "택배사를 찾을 수 없음")
 		default:
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			response.Error(c, http.StatusInternalServerError, "서버 내부 오류")
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, result)
+	response.Success(c, result, "운송장 정보 조회 성공")
 }

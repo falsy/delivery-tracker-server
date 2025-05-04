@@ -6,17 +6,24 @@
 
 데이터베이스 정보와 CORS 설정에 필요한 정보를 환경 변수로 사용하고 있습니다.
 
-```ts
-// .env
+```bash
 DB_USERNAME=
 DB_PASSWORD=
 DB_NAME=
 DB_HOST=
 DB_DIALECT=
 PORT=
-EXTENSION_ID=
-DEV_CLIENT_URL=
+ALLOWED_ORIGINS=
 ENVIRONMENT=
+```
+
+ENVIRONMENT 값이 "RELEASE" 인 경우 ALLOWED_ORIGINS에 해당하는 origin만 통신을 허용하며 ALLOWED_ORIGINS 값은 ","를 통해 복수로 입력할 수 있습니다.  
+그리고 ENVIRONMENT 값이 "RELEASE" 이 아닌 경우 모든 origin을 허용합니다.
+
+```bash
+// e.g.
+ENVIRONMENT=RELEASE
+ALLOWED_ORIGINS=http://localhost:2000,http://localhost:3000
 ```
 
 ## Database
@@ -47,6 +54,8 @@ CREATE TABLE `CarrierModels` (
 
 ### Raw data
 
+현재 사용하고 있는 전체 데이터는 아래와 같습니다.
+
 ```ts
 // 2025-04-05
 INSERT INTO `CarrierModels` (`id`, `uid`, `no`, `name`, `displayName`, `isCrawlable`, `isPopupEnabled`, `popupURL`, `createdAt`, `updatedAt`)
@@ -62,6 +71,30 @@ VALUES
   (9,'2de9119c-1fda-11ef-8884-0a8cb08d3aea',9,'daesin','대신 택배',1,0,'','2024-05-31 11:53:05','2024-05-31 11:53:05'),
   (10,'2de911ca-1fda-11ef-8884-0a8cb08d3aea',10,'ilyanglogis','일량로지스',0,1,'http://www.ilyanglogis.com/functionality/card_form_waybill.asp?hawb_no=','2024-05-31 11:54:03','2024-05-31 11:54:03'),
   (11,'2de911fb-1fda-11ef-8884-0a8cb08d3aea',11,'ems','국체우편(EMS)',0,1,'https://service.epost.go.kr/trace.RetrieveEmsRigiTraceList.comm?displayHeader=N&POST_CODE=','2024-05-31 11:54:36','2024-05-31 11:54:36');
+```
+
+## Docker
+
+배송 조회 API 서버는 Docker Hub를 통해 배포되어 있습니다.
+
+```bash
+$ docker pull falsy/delivery-tracker-server:latest
+```
+
+Docker Hub에서 Docker Image를 받아서 간편하게 사용할 수 있습니다.
+
+```ts
+// e.g.
+docker run -d -p 4000:4000 --name delivery-tracker-api-server \
+-e DB_USERNAME=username \
+-e DB_PASSWORD=password \
+-e DB_NAME=dbname \
+-e DB_HOST=dbhost.com \
+-e DB_DIALECT=mysql \
+-e PORT=4000 \
+-e ALLOWED_ORIGINS=http://localhost:2000 \
+-e ENVIRONMENT=RELEASE \
+falsy/delivery-tracker-server:latest
 ```
 
 ## API
@@ -84,18 +117,22 @@ interface ICarrier {
 
 ```ts
 // e.g.
-[
-  {
-    "id": "2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
-    "no": 1,
-    "name": "epost",
-    "displayName": "우체국 택배",
-    "isCrawlable": true,
-    "isPopupEnabled": true,
-    "popupURL": "https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
-  },
-  ...
-]
+{
+  "isError": false,
+  "message": "택배사 목록 조회 성공",
+  "data": [
+    {
+      "id": "2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
+      "no": 1,
+      "name": "epost",
+      "displayName": "우체국 택배",
+      "isCrawlable": true,
+      "isPopupEnabled": true,
+      "popupURL": "https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
+    },
+    ...
+  ]
+}
 ```
 
 ### GET /carrier/:carrierId
@@ -105,13 +142,17 @@ interface ICarrier {
 ```ts
 // e.g.
 {
-  "id": "2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
-  "no": 1,
-  "name": "epost",
-  "displayName": "우체국 택배",
-  "isCrawlable": true,
-  "isPopupEnabled": true,
-  "popupURL": "https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
+  "isError": false,
+  "message": "택배사 조회 성공",
+  "data": {
+    "id": "2de90e9c-1fda-11ef-8884-0a8cb08d3aea",
+    "no": 1,
+    "name": "epost",
+    "displayName": "우체국 택배",
+    "isCrawlable": true,
+    "isPopupEnabled": true,
+    "popupURL": "https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?displayHeader=N&sid1="
+  }
 }
 ```
 
@@ -148,38 +189,42 @@ interface IDeliveryStateVO {
 ```ts
 // e.g.
 {
-  "from": {
-    "name": "인천지점",
-    "time": "2023-09-12 13:40:00"
-  },
-  "to": {
-    "name": "여의도(대)",
-    "time": "2023-09-13 12:00:00"
-  },
-  "state": {
-    "id": "delivered",
-    "name": "배달완료"
-  },
-  "progresses": [
-    {
-      "description": "배달 완료하였습니다.",
-      "location": "여의도(대)",
-      "time": "2023-09-13 12:00:00",
-      "state": {
-        "id": "delivered",
-        "name": "배달완료"
-      }
+  "isError": false,
+  "message": "운송장 정보 조회 성공",
+  "data": {
+    "from": {
+      "name": "인천지점",
+      "time": "2023-09-12 13:40:00"
     },
-    {
-      "description": "고객님의 상품을 18~20시에 배달 예정 입니다.",
-      "location": "여의도(대)",
-      "time": "2023-09-13 09:33:00",
-      "state": {
-        "id": "out_for_delivery",
-        "name": "배달출발"
-      }
+    "to": {
+      "name": "여의도(대)",
+      "time": "2023-09-13 12:00:00"
     },
-    ...
-  ]
+    "state": {
+      "id": "delivered",
+      "name": "배달완료"
+    },
+    "progresses": [
+      {
+        "description": "배달 완료하였습니다.",
+        "location": "여의도(대)",
+        "time": "2023-09-13 12:00:00",
+        "state": {
+          "id": "delivered",
+          "name": "배달완료"
+        }
+      },
+      {
+        "description": "고객님의 상품을 18~20시에 배달 예정 입니다.",
+        "location": "여의도(대)",
+        "time": "2023-09-13 09:33:00",
+        "state": {
+          "id": "out_for_delivery",
+          "name": "배달출발"
+        }
+      },
+      ...
+    ]
+  }
 }
 ```

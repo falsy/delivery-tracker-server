@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/falsy/delivery-tracker-server/pkg/response"
 	"net/http"
 
 	"github.com/falsy/delivery-tracker-server/internal/service"
@@ -20,10 +21,10 @@ func NewCarrierHandler(carrierService service.CarrierService) *CarrierHandler {
 func (h *CarrierHandler) GetAllCarriers(c *gin.Context) {
 	carriers, err := h.carrierService.GetAllCarriers()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		response.Error(c, http.StatusInternalServerError, "DB 에러")
 		return
 	}
-	c.JSON(http.StatusOK, carriers)
+	response.Success(c, carriers, "택배사 목록 조회 성공")
 }
 
 func (h *CarrierHandler) GetCarrierByID(c *gin.Context) {
@@ -31,13 +32,13 @@ func (h *CarrierHandler) GetCarrierByID(c *gin.Context) {
 
 	carrier, err := h.carrierService.GetCarrierByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		response.Error(c, http.StatusInternalServerError, "DB 에러")
 		return
 	}
 	if carrier == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Carrier not found"})
+		response.Error(c, http.StatusNotFound, "존재하지 않는 택배사")
 		return
 	}
 
-	c.JSON(http.StatusOK, carrier)
+	response.Success(c, carrier, "택배사 조회 성공")
 }
